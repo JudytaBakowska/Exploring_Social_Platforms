@@ -2,10 +2,12 @@ import streamlit as st
 import pandas as pd
 from twitter import *
 from streamlit_option_menu import option_menu
+from facebook import *
 
 import matplotlib.pyplot as plt
 
 twitter_df = twitter_read()
+facebook_df = facebook_read()
 
 st.title('Interactive Dashboard for Social Platform Exploration')
 st.text('This is an interactive dashboard to analyse various social media dataset')
@@ -31,5 +33,21 @@ if uploaded_file:
             twitter_words(df)
         elif selected == "Most active users":
             twitter_users(df)
+            
+    if facebook_df.equals(df):
+        df.dropna(inplace=True)
+    
+        with st.sidebar:
+            selected = option_menu(
+                "Menu",
+                ("Home","Gender Analysis", "Age Analysis")
+            )
+            
+        if selected == "Home":
+            facebook_home()
+        elif selected == "Gender Analysis":
+            facebook_gender(df)
+        elif selected == "Age Analysis":
+            facebook_age(df)
   
   
