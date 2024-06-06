@@ -18,7 +18,7 @@ if uploaded_file:
     df = pd.read_csv(uploaded_file,encoding='ISO-8859-1')
 
     if twitter_df.equals(df):
-        df.columns = ['Target','IDs','Date','Flag','User','Text']
+        df.columns = ['Target', 'IDs', 'Date', 'Flag', 'User', 'Text', 'Sentiment']
         
         with st.sidebar:
             selected = option_menu(
