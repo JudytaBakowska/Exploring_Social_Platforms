@@ -3,14 +3,15 @@ import streamlit as st
 import matplotlib.pyplot as plt
 from collections import Counter
 
+
 def twitter_read():
     df_twitter = pd.read_csv('datasets/twitter_dataset.csv', encoding='ISO-8859-1')
-    
     return df_twitter
+
 
 def twitter_home():
     st.header('You choose sentiment140 dataset with tweets')
-    
+
     st.markdown('''
         ***This is the sentiment140 dataset.***\n
         It contains 1,600,000 tweets extracted using the twitter api . The tweets have been annotated (0 = negative, 2 = neutral, 4 = positive) and they can be used to detect sentiment .\n
@@ -23,29 +24,30 @@ def twitter_home():
         ***user***: the user that tweeted (robotickilldozr)\n
         ***text***: the text of the tweet (Lyx is cool)''')
 
+
 df_twitter = twitter_read()
-df_twitter.columns = ['Target','IDs','Date','Flag','User','Text']
+df_twitter.columns = ['Target', 'IDs', 'Date', 'Flag', 'User', 'Text', 'Sentiment']
 negative_tweets = df_twitter[df_twitter['Target'] == 0]
 positive_tweets = df_twitter[df_twitter['Target'] == 4]
+
 
 def twitter_moods(df_twitter):
     st.header("Sentiment analysis")
     df_twitter['Date'] = pd.to_datetime(df_twitter['Date'])
-       
-    df_twitter.set_index('Date', inplace=True)
 
+    df_twitter.set_index('Date', inplace=True)
 
     negative_tweets = df_twitter[df_twitter['Target'] == 0].resample('D').size()
     positive_tweets = df_twitter[df_twitter['Target'] == 4].resample('D').size()
-        
+
     option = st.selectbox(
         "What mood you would like to see on the plot?",
         ("Negative", "Positive", "Mixed"),
-        index = None,
+        index=None,
         placeholder="Select the mood you want to see... "
     )
-        
-    #plot
+
+    # plot
     fig, ax = plt.subplots(figsize=(10, 6))
     if option == "Negative":
         negative_tweets.plot(ax=ax, color='red')
@@ -54,30 +56,31 @@ def twitter_moods(df_twitter):
     else:
         negative_tweets.plot(ax=ax, color='red')
         positive_tweets.plot(ax=ax, color='green')
-       
+
     ax.set_xlabel('Date')
     ax.set_ylabel(f'Counts of {option} moods')
     ax.set_title('Changes in sentiment numbers ')
-    st.pyplot(fig) 
+    st.pyplot(fig)
+
 
 def twitter_words(df_twitter):
     st.header("Words analysis")
     positive = positive_tweets['Text']
     negative = negative_tweets['Text']
-    
+
     positive_words = ' '.join(positive).split()
     positive_words_counts = Counter(word for word in positive_words if len(word) > 4)
-    
+
     negative_words = ' '.join(negative).split()
     negative_words_counts = Counter(word for word in negative_words if len(word) > 4)
-    
-    words =  ' '.join(df_twitter['Text']).split()
+
+    words = ' '.join(df_twitter['Text']).split()
     words_counts = Counter(word for word in words if len(word) > 4)
-   
+
     option = st.radio(
-    "Top 20 words used in tweets",
-    [":red[Negative]", ":green[Positive]", "General"],
-    index=None,
+        "Top 20 words used in tweets",
+        [":red[Negative]", ":green[Positive]", "General"],
+        index=None,
     )
     if option == ":red[Negative]":
         st.write(f"Most frequent words in negative tweets: {negative_words_counts.most_common(10)}")
@@ -92,7 +95,7 @@ def twitter_users(df_twitter):
     user_counts = df_twitter['User'].value_counts()
     st.write(f"Most active users: {user_counts[:15]}")
 
-    fig,ax = plt.subplots()
-    user_counts[:15].plot(kind='bar',ax = ax)
+    fig, ax = plt.subplots()
+    user_counts[:15].plot(kind='bar', ax=ax)
     ax.set_title("Most active users")
     st.pyplot(fig)
