@@ -11,18 +11,14 @@ def check_columns(dataframe, required_columns):
 
 def check_sentiment(dataframe):
     allowed_sentiments = {'positive', 'negative', 'neutral'}
-
-    if not dataframe['Sentiment'].isin(allowed_sentiments).all():
-        return False
-
-    return True
+    return dataframe['Sentiment'].isin(allowed_sentiments).all()
 
 
 def load_and_analyze_csv(uploaded_file):
     try:
         df = pd.read_csv(uploaded_file)
 
-        if check_columns(df, ['Text', 'Sentiment']) and check_sentiment(df):
+        if check_columns(df, ['Text', 'Sentiment']):
             if check_sentiment(df):
                 st.success('CSV file meets the requirements.')
             else:
@@ -34,7 +30,7 @@ def load_and_analyze_csv(uploaded_file):
 
         else:
             st.error(
-                "CSV file does not meet the requirements. It must contain at least 'Text' and 'Sentiment' columns.")
+                "CSV file does not meet the requirements. It must contain at least 'Text' column.")
 
         with st.sidebar:
             selected = option_menu(
