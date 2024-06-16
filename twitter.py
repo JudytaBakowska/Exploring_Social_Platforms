@@ -1,8 +1,15 @@
-import pandas as pd
-import streamlit as st
-import matplotlib.pyplot as plt
 from collections import Counter
-
+import streamlit as st
+import pandas as pd
+from twitter import *
+from streamlit_option_menu import option_menu
+from facebook import *
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+from utils.data_loader import preprocess_dataframe
 
 def twitter_read():
     df_twitter = pd.read_csv('datasets/twitter_dataset.csv', encoding='ISO-8859-1')
@@ -27,6 +34,7 @@ def twitter_home():
 
 df_twitter = twitter_read()
 df_twitter.columns = ['Target', 'IDs', 'Date', 'Flag', 'User', 'Text', 'Sentiment']
+df_twitter = preprocess_dataframe(df_twitter)  # Usuń stop words
 negative_tweets = df_twitter[df_twitter['Target'] == 0]
 positive_tweets = df_twitter[df_twitter['Target'] == 4]
 
