@@ -5,9 +5,33 @@ from .analysis import analyze_sentiment, analyze_words, analyze_text_length
 from .reduction import pca_analysis, tsne_analysis, umap_analysis
 import nltk
 from nltk.corpus import stopwords
-
+from transformers import BertTokenizer, BertForSequenceClassification
+import torch
 
 nltk.download('stopwords')
+
+model_name = "nlptown/bert-base-multilingual-uncased-sentiment"
+tokenizer = BertTokenizer.from_pretrained(model_name)
+model = BertForSequenceClassification.from_pretrained(model_name)
+
+def predict_sentiment(texts):
+    inputs = tokenizer(texts, return_tensors="pt", truncation=True, padding=True)
+    with torch.no_grad():
+        outputs = model(**inputs)
+    logits = outputs.logits
+    predicted_classes = torch.argmax(logits, dim=1).tolist()
+    
+    # Convert predicted class to sentiment label
+    sentiments = ['negative', 'neutral', 'positive']
+    results = []
+    for predicted_class in predicted_classes:
+        if predicted_class == 0 or predicted_class == 1:
+            results.append('negative')
+        elif predicted_class == 2:
+            results.append('neutral')
+        else:
+            results.append('positive')
+    return results
 
 def check_columns(dataframe, required_columns):
     missing_columns = [col for col in required_columns if col not in dataframe.columns]
@@ -41,8 +65,23 @@ def load_and_analyze_csv(uploaded_file):
 
         elif check_columns(df, ['Text']):
             st.success('CSV file meets the requirements.')
-            # TODO: Uzupełnić kolumnę 'Sentiment' używając modelu ML
+            st.info("Sentiment column missing. Predicting sentiments...")
 
+            # Ensure the 'Text' column contains strings
+            df['Text'] = df['Text'].astype(str)
+
+            # Predict sentiment for each row
+            batch_size = 32  # Adjust batch size as needed
+            num_batches = len(df) // batch_size + (1 if len(df) % batch_size != 0 else 0)
+            sentiments = []
+
+            for i in range(num_batches):
+                batch_texts = df['Text'][i * batch_size: (i + 1) * batch_size].tolist()
+                sentiments.extend(predict_sentiment(batch_texts))
+                #st.info(f'Processed batch {i+1}/{num_batches}')
+
+            df['Sentiment'] = sentiments
+            
         else:
             st.error(
                 "CSV file does not meet the requirements. It must contain at least 'Text' column.")
