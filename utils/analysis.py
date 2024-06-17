@@ -1,7 +1,7 @@
 import streamlit as st
 from collections import Counter
 from matplotlib import pyplot as plt
-from .plots import plot_sorted_bar_chart, plot_bar_chart, plot_reduction, plot_umap
+from .plots import plot_sorted_bar_chart, plot_bar_chart, plot_umap
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.decomposition import PCA
