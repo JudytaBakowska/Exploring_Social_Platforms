@@ -58,11 +58,11 @@ if uploaded_file:
             )
 
             if reduction_option == "PCA":
-                pca_analysis(df)
+                pca_analysis(df, csv_path=uploaded_file.name.replace('.csv', '_pca_data.csv'))
             elif reduction_option == "UMAP":
-                umap_analysis(df)
+                umap_analysis(df, csv_path=uploaded_file.name.replace('.csv', '_umap_data.csv'))
             elif reduction_option == "t-SNE":
-                tsne_analysis(df)
+                tsne_analysis(df, csv_path=uploaded_file.name.replace('.csv', '_tsne_data.csv'))
 
     if facebook_df.equals(df):
         df.dropna(inplace=True)
@@ -90,10 +90,10 @@ if uploaded_file:
             )
 
             if reduction_option == "PCA":
-                pca_analysis(df)
+                pca_analysis(df, csv_path=uploaded_file.name.replace('.csv', '_pca_data.csv'))
             elif reduction_option == "UMAP":
-                umap_analysis(df)
+                umap_analysis(df, csv_path=uploaded_file.name.replace('.csv', '_umap_data.csv'))
             elif reduction_option == "t-SNE":
-                tsne_analysis(df)
+                tsne_analysis(df, csv_path=uploaded_file.name.replace('.csv', '_tsne_data.csv'))
 
   

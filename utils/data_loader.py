@@ -79,11 +79,11 @@ def load_and_analyze_csv(uploaded_file):
             )
             
               if reduction_option == "PCA":
-                pca_analysis(df)
+                pca_analysis(df, csv_path=uploaded_file.name.replace('.csv', '_pca_data.csv'))
               elif reduction_option == "UMAP":
-                umap_analysis(df)
+                umap_analysis(df, csv_path=uploaded_file.name.replace('.csv', '_umap_data.csv'))
               elif reduction_option == "t-SNE":
-                tsne_analysis(df)
+                tsne_analysis(df, csv_path=uploaded_file.name.replace('.csv', '_tsne_data.csv'))
 
     except UnicodeDecodeError:
         st.error('Decoding Error: The file is not encoded as UTF-8. Try again with a UTF-8 encoded file.')
